@@ -65,12 +65,29 @@ map_int(num_matches_list, score) %>%
 
 # Part II
 
-tibble(
-    card = 1:length(num_matches_list %>% unlist()),
-    matches = num_matches_list %>% unlist()
-) %>%
-    mutate(card_copy = map2(card + 1, matches, ~ seq(
-        from = .x, by = 1,
-        length.out = .y
-    ))) %>%
-    unnest(card_copy)
+(cards <- rep(1, nrow(df))) # all cards start with one
+
+for (i in seq_along(cards)) {
+    if (i == 0) next
+    n <- cards[i]
+
+    wins <- sum(win_num_list[[i]] %in% my_num_list[[i]])
+
+    cards[seq_len(wins) + i] <- cards[seq_len(wins) + i] + n
+}
+
+sum(cards)
+
+
+# tibble(
+#     card = 1:length(num_matches_list %>% unlist()),
+#     matches = num_matches_list %>% unlist()
+# ) %>%
+#     mutate(card_copy = map2(card + 1, matches, ~ seq(
+#         from = .x, by = 1,
+#         length.out = .y
+#     ))) %>%
+#     unnest(card_copy) %>%
+#     group_by(card_copy) %>%
+#     mutate(card_copy_2 = map2())
+# Look at how the data was structured
